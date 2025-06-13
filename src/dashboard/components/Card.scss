@@ -1,0 +1,68 @@
+.deposit-card {
+  background: var(--card-bg);
+  color: var(--text-light);
+  padding: 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+
+  h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+  }
+
+  .amount {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .cta-button {
+    padding: 0.6rem 1.2rem;
+    background: var(--highlight);
+    border: none;
+    border-radius: 6px;
+    color: #000;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #ffd54f;
+    }
+  }
+}
+
+.bonus-card {
+  background: var(--card-bg);
+  color: var(--text-light);
+  padding: 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+
+  h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+  }
+
+  .amount {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #ffc107; // Optional: yellow color for bonus visibility
+  }
+
+  .cta-button {
+    padding: 0.6rem 1.2rem;
+    background: var(--highlight);
+    border: none;
+    border-radius: 6px;
+    color: #000;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #ffd54f;
+    }
+  }
+}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Cashout Tips</title>
+  <link href="manifest.json" rel="manifest" />
+  <meta content="#317EFB" name="theme-color" />
+
+  <!-- ✅ Button + Toast Styles -->
+  <style>
+    #install-btn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #FFD700;
+      color: #000;
+      font-weight: 600;
+      font-family: sans-serif;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 999px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      z-index: 9999;
+      transition: background-color 0.3s;
+    }
+    #install-btn:hover {
+      background-color: #facc15;
+    }
+
+    #toast {
+      visibility: hidden;
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background-color: #323232;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 10000;
+      opacity: 0;
+      transition: opacity 0.4s ease, visibility 0.4s;
+    }
+    #toast.show {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- ✅ Install Button -->
+  <button id="install-btn">📲 Install CashoutTips</button>
+
+  <!-- ✅ Toast Message -->
+  <div id="toast">✅ CashoutTips installed successfully!</div>
+
+  <script src="/src/main.jsx" type="module"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(() => console.log('✅ Service Worker Registered'))
+        .catch(error => console.error('❌ SW registration failed:', error));
+    }
+
+    let deferredPrompt;
+    const installBtn = document.getElementById('install-btn');
+    const toast = document.getElementById('toast');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+
+      if (installBtn) {
+        installBtn.style.display = 'inline-block';
+        installBtn.addEventListener('click', () => {
+          installBtn.style.display = 'none';
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then(choice => {
+            if (choice.outcome === 'accepted') {
+              console.log('✅ User accepted install');
+            } else {
+              console.log('❌ User dismissed install');
+            }
+            deferredPrompt = null;
+          });
+        });
+      }
+    });
+
+    window.addEventListener('appinstalled', () => {
+      console.log('✅ App installed');
+      if (installBtn) installBtn.style.display = 'none';
+
+      // 🎉 Show Toast
+      if (toast) {
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+      }
+    });
+  </script>
+</body>
+</html>

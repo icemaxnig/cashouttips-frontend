@@ -1,0 +1,41 @@
+// src/dashboard/components/SubscribeToRolloverPlansWidget.scss
+.rollover-widget {
+  background: var(--card-bg);
+  color: var(--text-light);
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+
+  h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: var(--highlight);
+  }
+
+  .preview-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+
+    li {
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #333;
+    }
+  }
+
+  .widget-btn {
+    padding: 0.6rem 1rem;
+    background-color: var(--highlight);
+    color: #000;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #ffdd55;
+    }
+  }
+}

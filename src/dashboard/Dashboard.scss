@@ -1,0 +1,45 @@
+:root {
+  --brand-bg: linear-gradient(135deg, #000428 0%, #004e92 100%);
+  --card-bg: #0f1c2e;
+  --text-light: #f0f0f0;
+  --highlight: #ffc107;
+  --border-radius: 12px;
+}
+
+.dashboard {
+  min-height: 100vh;
+  padding: 2rem;
+  background: var(--brand-bg);
+
+  .welcome-message {
+    margin-bottom: 2rem;
+
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--text-light);
+
+      .highlight {
+        color: var(--highlight);
+      }
+    }
+  }
+
+  .dashboard-grid {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    &.grid-3 {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    &.grid-4 {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    &.grid-3-fixed {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}

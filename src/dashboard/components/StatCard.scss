@@ -1,0 +1,44 @@
+// src/dashboard/components/StatCard.scss
+
+.stat-card {
+  background: var(--card-bg);
+  color: var(--text-light);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 120px;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+
+  h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--highlight);
+    margin-bottom: 0.75rem;
+  }
+
+  .value {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  &.active-plan {
+    border-left: 4px solid #00c6ff;
+  }
+
+  &.tips-today {
+    border-left: 4px solid #28a745;
+  }
+
+  &.booking-codes {
+    border-left: 4px solid #ffc107;
+  }
+}

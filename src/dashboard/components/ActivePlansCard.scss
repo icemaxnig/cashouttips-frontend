@@ -1,0 +1,50 @@
+.active-plans-card {
+  background: var(--card-bg);
+  color: var(--text-light);
+  padding: 1.2rem 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+
+  h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--highlight);
+  }
+
+  .plan-list {
+    list-style: none;
+    padding: 0;
+
+    li {
+      margin-bottom: 0.8rem;
+      padding: 0.5rem 0.7rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s ease;
+
+      &.expiring {
+        background: rgba(255, 0, 0, 0.1);
+      }
+
+      .plan-name {
+        font-weight: 600;
+      }
+
+      .plan-meta {
+        font-size: 0.9rem;
+
+        .badge {
+          background: #ff6f61;
+          color: white;
+          padding: 0.2rem 0.5rem;
+          border-radius: 0.3rem;
+          margin-left: 0.5rem;
+          font-size: 0.75rem;
+        }
+      }
+    }
+  }
+}
