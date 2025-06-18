@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api from "../utils/api";
+import api from "../api";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      await api.post("/auth/forgot-password", { email });
+      await api.post("/api/auth/forgot-password", { email });
       setMessage("OTP has been sent to your email.");
       navigate("/reset-password", { state: { email } });
     } catch (err) {

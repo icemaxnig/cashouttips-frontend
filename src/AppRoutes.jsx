@@ -1,29 +1,36 @@
+// src/AppRoutes.jsx
 
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+
+import Landing from "./pages/landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Landing from "./pages/Landing";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyOtp from "./pages/VerifyOtp";
-import Dashboard from "./dashboard/Dashboard";
-import MyCodes from "./pages/MyCodes";
-import BookingCodeList from "./pages/BookingCodeList";
-import BookingCodes from "./pages/BookingCodes"; // ✅ Correct file
-import BookingCodeDetail from "./pages/BookingCodeDetail";
+
 import ProtectedRoute from "./components/ProtectedRoute";
-import Profile from "./pages/Profile";
 import WithNavbar from "./layouts/WithNavbar";
 
-import SubscribeRollover from "./pages/SubscribeRollover";
+import Dashboard from "./dashboard/Dashboard";
+import Profile from "./pages/Profile";
+import Subscribe from "./pages/Subscribe"; // ✅ Renamed from SubscribeRollover
 import SubscribePlanDetail from "./pages/SubscribePlanDetail";
 import GroupedRolloverViewer from "./pages/GroupedRolloverViewer";
 import MyRollover from "./pages/MyRollover";
 import BuyCodes from "./pages/BuyCodes";
 import FreeTips from "./pages/FreeTips";
+import AllBookingCodes from "./pages/AllBookingCodes";
+import BookingCodeDetail from "./pages/BookingCodeDetail";
+import MyPurchasedCodes from "./dashboard/components/MyPurchasedCodes";
+import BookingCodeList from "./pages/BookingCodeList";
+import BookingCodes from "./pages/BookingCodes";
 import ManageRolloverPlans from "./pages/ManageRolloverPlans";
 import RolloverPlans from "./pages/RolloverPlans";
+import MyCodes from "./pages/MyCodes";
+import Rollover from "./pages/Rollover"; // or wherever it's located
+
 
 const AppRoutes = () => {
   return (
@@ -35,11 +42,13 @@ const AppRoutes = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
+      <Route path="/subscribe" element={<Subscribe />} /> {/* ✅ Updated here */}
       <Route path="/subscribe/:id" element={<SubscribePlanDetail />} />
-      <Route path="/subscribe" element={<SubscribeRollover />} />
-      <Route path="/admin/manage-rollover" element={<ManageRolloverPlans />} />
       <Route path="/rollover-plans" element={<RolloverPlans />} />
-	  <Route path="/booking-codes/:id" element={<BookingCodeDetail />} />
+      <Route path="/admin/manage-rollover" element={<ManageRolloverPlans />} />
+	  <Route path="/my-rollover" element={<MyRollover />} />
+	  <Route path="/rollover" element={<Rollover />} />
+
 
       {/* Protected Routes with Navbar */}
       <Route
@@ -58,6 +67,46 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <WithNavbar>
               <Profile />
+            </WithNavbar>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/rollover"
+        element={
+          <ProtectedRoute>
+            <WithNavbar>
+              <GroupedRolloverViewer />
+            </WithNavbar>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-rollover"
+        element={
+          <ProtectedRoute>
+            <WithNavbar>
+              <MyRollover />
+            </WithNavbar>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/booking-codes"
+        element={
+          <ProtectedRoute>
+            <WithNavbar>
+              <AllBookingCodes />
+            </WithNavbar>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/booking-codes/:id"
+        element={
+          <ProtectedRoute>
+            <WithNavbar>
+              <BookingCodeDetail />
             </WithNavbar>
           </ProtectedRoute>
         }
@@ -83,31 +132,11 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/booking-codes"
+        path="/booking"
         element={
           <ProtectedRoute>
             <WithNavbar>
               <BookingCodes />
-            </WithNavbar>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/rollover"
-        element={
-          <ProtectedRoute>
-            <WithNavbar>
-              <GroupedRolloverViewer />
-            </WithNavbar>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/my-rollover"
-        element={
-          <ProtectedRoute>
-            <WithNavbar>
-              <MyRollover />
             </WithNavbar>
           </ProtectedRoute>
         }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api from "../utils/api";
+import api from "../api";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
@@ -45,45 +45,45 @@ const Register = () => {
     pw.length >= 6 && /[A-Z]/.test(pw) && /[a-z]/.test(pw) && /[0-9]/.test(pw);
 
   const sendOtp = async () => {
-  if (otpSent) return; // Don't resend again
-  setError("");
-  if (!form.email.includes("@")) return setError("Enter a valid email.");
-  try {
-    const res = await api.post("/auth/register", {
-      firstName: form.firstName,
-      lastName: form.lastName,
-      email: form.email,
-      phone: form.phone,
-      password: form.password,
-    });
+    if (otpSent) return; // Don't resend again
+    setError("");
+    if (!form.email.includes("@")) return setError("Enter a valid email.");
+    try {
+      const res = await api.post("/auth/register", {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        phone: form.phone,
+        password: form.password,
+      });
 
-    setOtpSent(true);
-    setOtpCooldown(60);
-    setMessage(res.data.message);
-  } catch (err) {
-    setError(err.response?.data?.message || "Failed to send OTP.");
-  }
-};
+      setOtpSent(true);
+      setOtpCooldown(60);
+      setMessage(res.data.message);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to send OTP.");
+    }
+  };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  setMessage("");
+    e.preventDefault();
+    setError("");
+    setMessage("");
 
-  if (!form.otp) return setError("Enter the OTP sent to your email.");
+    if (!form.otp) return setError("Enter the OTP sent to your email.");
 
-  try {
-    const res = await api.post("/auth/verify-otp", {
-      email: form.email,
-      otp: form.otp,
-    });
+    try {
+      const res = await api.post("/auth/verify-otp", {
+        email: form.email,
+        otp: form.otp,
+      });
 
-    setMessage("✅ Account verified! Redirecting to login...");
-    setTimeout(() => navigate("/login"), 3000);
-  } catch (err) {
-    setError(err.response?.data?.message || "OTP verification failed.");
-  }
-};
+      setMessage("✅ Account verified! Redirecting to login...");
+      setTimeout(() => navigate("/login"), 3000);
+    } catch (err) {
+      setError(err.response?.data?.message || "OTP verification failed.");
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0A0E2C] text-white p-4">

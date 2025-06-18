@@ -1,104 +1,165 @@
-// src/pages/BookingCodeDetail.jsx
-import React, { useEffect, useState } from "react";
+// 📁 src/pages/BookingCodeDetail.jsx
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../dashboard/context/AuthContext";
 import api from "../api";
-import { notifyError, notifySuccess } from "../utils/toast";
-import LockIcon from "../assets/lock.svg";
+import { toast } from "react-toastify"; // ✅ correct
 
 const BookingCodeDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [booking, setBooking] = useState(null);
+  const { token } = useAuth();
+  const [code, setCode] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [buying, setBuying] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    api
-      .get("/booking-codes", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        const found = res.data.find((b) => b._id === id);
-        if (!found) {
-          notifyError("Booking Code not found");
-          return navigate("/booking-codes");
+    const fetchCodeDetails = async () => {
+      try {
+        console.log("🔍 Fetching code details for ID:", id);
+        const response = await api.get(`/booking-codes/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        console.log("📦 Received code data:", response.data);
+        
+        if (response.data) {
+          setCode(response.data);
+        } else {
+          setError("Code not found");
         }
-        setBooking(found);
-      })
-      .catch(() => notifyError("Error loading code"))
-      .finally(() => setLoading(false));
-  }, [id, navigate]);
+      } catch (err) {
+        console.error("❌ Error fetching code:", err);
+        setError(err.response?.data?.error || "Failed to load code details");
+        toast.error("Failed to load code details");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleBuy = async () => {
-    setBuying(true);
-    const token = localStorage.getItem("token");
-    try {
-      const res = await api.post(`/booking-codes/buy/${id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      notifySuccess("Purchased successfully!");
-      setBooking(res.data.code);
-    } catch (err) {
-      notifyError(err?.response?.data?.error || "Error purchasing");
-    } finally {
-      setBuying(false);
+    if (token && id) {
+      fetchCodeDetails();
     }
+  }, [id, token]);
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
-  if (loading) return <div className="text-center py-10">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
-  if (!booking) return null;
+  if (error) {
+    return (
+      <div className="text-center p-8">
+        <p className="text-red-500 mb-4">{error}</p>
+        <button
+          onClick={() => navigate("/my-codes")}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Back to My Codes
+        </button>
+      </div>
+    );
+  }
 
-  const {
-    code,
-    bookmaker,
-    odds,
-    price,
-    category,
-    urgencyTag,
-    successRate,
-    note,
-    alreadyPurchased,
-    buyerCount,
-    slotLimit,
-    expiresAt,
-    postedAt,
-    purchaseTime,
-  } = booking;
+  if (!code) {
+    return (
+      <div className="text-center p-8">
+        <h3 className="text-xl font-semibold mb-4">Code Not Found</h3>
+        <p className="text-gray-600 mb-6">
+          The requested booking code could not be found.
+        </p>
+        <button
+          onClick={() => navigate("/my-codes")}
+          className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+        >
+          Back to My Codes
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-2xl mx-auto p-4 text-white bg-[#0A0E2C] min-h-screen">
-      <h1 className="text-xl font-bold text-yellow-400 mb-4">📋 Booking Code Details</h1>
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto">
+        <div className="mb-6">
+          <button
+            onClick={() => navigate("/my-codes")}
+            className="text-blue-500 hover:text-blue-600 flex items-center gap-2"
+          >
+            ← Back to My Codes
+          </button>
+        </div>
 
-      <div className="bg-[#111638] p-4 rounded shadow space-y-2">
-        <p>🎲 <strong>Odds:</strong> {odds}</p>
-        <p>💼 <strong>Bookmaker:</strong> {bookmaker}</p>
-        <p>🎯 <strong>Category:</strong> {category}</p>
-        <p>{urgencyTag && <>🚨 <strong>Urgency:</strong> {urgencyTag}</>}</p>
-        <p>🔐 <strong>Price:</strong> ₦{price}</p>
-        <p>📈 <strong>Success Rate:</strong> {successRate}%</p>
-        {note && <p>📝 <strong>Admin Note:</strong> {note}</p>}
-        <p>📤 <strong>Posted:</strong> {new Date(postedAt).toLocaleString()}</p>
-        <p>⏳ <strong>Expires:</strong> {new Date(expiresAt).toLocaleString()}</p>
-        <p>👥 <strong>Buyers:</strong> {buyerCount}{slotLimit ? ` / ${slotLimit}` : ""}</p>
-        {purchaseTime && <p>🕒 <strong>Purchased At:</strong> {new Date(purchaseTime).toLocaleString()}</p>}
-
-        <div className="text-center mt-6">
-          {alreadyPurchased ? (
-            <div className="text-green-400 font-bold text-lg">✅ UNLOCKED: {code}</div>
-          ) : (
-            <div className="flex flex-col items-center gap-3">
-              <img src={LockIcon} alt="locked" className="w-10 h-10 opacity-80" />
-              <button
-                onClick={handleBuy}
-                disabled={buying}
-                className="btn bg-yellow-400 text-[#0A0E2C] font-bold px-6 py-2 rounded"
-              >
-                {buying ? "Processing..." : `Buy for ₦${price}`}
-              </button>
+        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                {code.bookmaker}
+              </h1>
+              <p className="text-gray-500">
+                Expires on {formatDate(code.expiresAt)}
+              </p>
             </div>
-          )}
+            <span className="px-4 py-2 text-sm font-medium rounded-full bg-blue-100 text-blue-800">
+              {code.urgencyTag}
+            </span>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Booking Code</h3>
+                <p className="font-mono text-xl">{code.code}</p>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Odds</h3>
+                <p className="text-2xl font-bold text-blue-600">{code.odds}</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Game Details</h3>
+                <div className="space-y-2">
+                  <p className="text-gray-600">
+                    <span className="font-medium">Bookmaker:</span> {code.bookmaker}
+                  </p>
+                  <p className="text-gray-600">
+                    <span className="font-medium">Status:</span> Active
+                  </p>
+                  <p className="text-gray-600">
+                    <span className="font-medium">Expires:</span> {formatDate(code.expiresAt)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Instructions</h3>
+                <ol className="list-decimal list-inside space-y-2 text-gray-600">
+                  <li>Copy the booking code above</li>
+                  <li>Visit {code.bookmaker} website or app</li>
+                  <li>Paste the code in the booking section</li>
+                  <li>Complete your booking before expiration</li>
+                </ol>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

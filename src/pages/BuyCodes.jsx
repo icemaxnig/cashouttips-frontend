@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import api from "../utils/api";
+import api from "../api";
 import { useAuth } from "../dashboard/context/authContext";
 import OCard from "../components/OCard";
 import OCardFilters from "../components/OCardFilters";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
+
 
 const BuyCodes = () => {
   const { user } = useAuth();

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import api from "../utils/api";
-import toast from "react-hot-toast";
+import api from "../api";
+import { toast } from "react-toastify";
+
 
 const Profile = () => {
   const [user, setUser] = useState(null);

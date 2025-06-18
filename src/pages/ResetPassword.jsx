@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import api from "../utils/api";
+import api from "../api";
 
 const ResetPassword = () => {
   const location = useLocation();
@@ -23,7 +23,7 @@ const ResetPassword = () => {
     setError(""); setSuccess("");
 
     try {
-      await api.post("/auth/reset-password", {
+      await api.post("/api/auth/reset-password", {
         email,
         otp,
         newPassword,

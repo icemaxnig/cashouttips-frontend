@@ -1,3 +1,4 @@
+// src/App.jsx
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import AppRoutes from "./AppRoutes";
@@ -7,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 const App = () => (
   <BrowserRouter>
     <AppRoutes />
-    <ToastContainer position="top-right" autoClose={3000} />
+    <ToastContainer position="top-right" autoClose={3000} newestOnTop pauseOnHover />
   </BrowserRouter>
 );
 

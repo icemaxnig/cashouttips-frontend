@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../utils/api";
+import api from "../api";
 import { useAuth } from "../dashboard/context/AuthContext";
 
 const Login = () => {
@@ -31,7 +31,7 @@ const Login = () => {
       }
     } catch (err) {
       console.error("Login error:", err.response?.data || err.message);
-      setError("Invalid email or password.");
+      setError(err.response?.data?.message || "Invalid email or password.");
     }
   };
 
@@ -76,7 +76,7 @@ const Login = () => {
           <Link to="/forgot-password" className="text-yellow-300 hover:underline">Forgot Password?</Link>
         </div>
         <div className="text-center text-sm text-white/70">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <Link to="/register" className="text-yellow-300 hover:underline">Register</Link>
         </div>
       </div>

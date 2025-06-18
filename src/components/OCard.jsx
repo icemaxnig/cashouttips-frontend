@@ -1,7 +1,7 @@
 // 📦 OCard.jsx (Booking card with color-coded countdown)
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import api from "../utils/api";
+import api from "../api";
 import { useAuth } from "../dashboard/context/authContext";
 
 const OCard = ({ tip, refresh }) => {

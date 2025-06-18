@@ -1,41 +1,36 @@
-// bookingcodes.jsx
 import React, { useEffect, useState } from "react";
 import api from "../api";
-import BookingCodeCard from "./bookingcodelist";
+import WalletBadge from "../components/WalletBadge";
 
 const BookingCodes = () => {
   const [codes, setCodes] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    api
-      .get("/booking-codes", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        setCodes(res.data || []);
-      })
-      .catch((err) => {
-        console.error("Error loading codes:", err);
-      })
-      .finally(() => setLoading(false));
+    api.get("/booking")
+      .then((res) => setCodes(res.data))
+      .catch((err) => console.error("Error loading codes", err));
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0A0E2C] text-white p-4">
-      <h2 className="text-xl font-bold text-yellow-400 mb-4">🎯 All Premium Booking Codes</h2>
-      {loading ? (
-        <p>Loading booking codes...</p>
-      ) : codes.length === 0 ? (
-        <p>No booking codes available.</p>
-      ) : (
-        <div className="grid md:grid-cols-2 gap-4">
-          {codes.map((code) => (
-            <BookingCodeCard key={code._id} code={code} />
-          ))}
-        </div>
-      )}
+    <div className="p-4">
+      <WalletBadge />
+      <h2 className="text-xl font-bold mb-4">🎯 Premium Booking Codes</h2>
+      <div className="grid gap-4">
+        {codes.length === 0 ? (
+          <p>No booking codes available.</p>
+        ) : (
+          codes.map((code) => (
+            <div key={code._id} className="border rounded p-4 shadow">
+              <p className="font-semibold text-lg">🔒 Locked</p>
+              <p>₦{code.price}</p>
+              <p>📊 Odds: {code.odds}</p>
+              <p>🏦 Bookmaker: {code.bookmaker}</p>
+              <p>{code.urgencyTag}</p>
+              <p>{code.category}</p>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };

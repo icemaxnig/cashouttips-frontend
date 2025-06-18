@@ -2,8 +2,8 @@
 // 📁 pages/FreeTips.jsx
 
 import React, { useEffect, useState } from "react";
-import api from "../utils/api";
-import toast from "react-hot-toast";
+import api from "../api";
+import { toast } from "react-toastify";
 
 const FreeTips = () => {
   const [tips, setTips] = useState([]);
