@@ -1,7 +1,7 @@
+// 📄 FreeTipsWrapper.jsx — Compact Dashboard Widget
 import React, { useEffect, useState } from "react";
 import api from "../../api";
 import { motion } from "framer-motion";
-import "./FreeTipsWrapper.scss";
 
 const FreeTipsWrapper = () => {
   const [pastTips, setPastTips] = useState([]);
@@ -13,54 +13,61 @@ const FreeTipsWrapper = () => {
   }, []);
 
   return (
-    <motion.div 
-      className="free-tips-card bg-[#FAFAFA] text-[#222222] p-4 rounded-2xl shadow-md"
-      initial={{ opacity: 0, y: 10 }} 
-      animate={{ opacity: 1, y: 0 }} 
+    <motion.div
+      className="bg-[#11152F] text-white p-4 rounded-xl shadow-md space-y-4"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      {/* 🎯 Section 1: Live Free Tips */}
-      <div className="section live-tips mb-6">
-        <h3 className="text-[#1F2D5C] font-poppins font-semibold text-lg mb-2">🎯 Free Tips Today</h3>
-        <p className="font-inter text-sm mb-3">Join our premium communities for daily free expert tips:</p>
-        <div className="cta-buttons flex flex-col gap-2">
+      {/* Header */}
+      <div>
+        <h3 className="text-sm sm:text-md font-semibold text-yellow-400 mb-1">🎯 Free Tips Today</h3>
+        <p className="text-xs text-gray-400 mb-2">Join our premium communities for free expert tips daily.</p>
+
+        <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
           <a
             href="https://t.me/cashouttips_ai"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-[#1F2D5C] text-white text-sm font-bold py-2 px-4 rounded-full hover:bg-[#152041] transition"
+            className="bg-blue-600 hover:bg-blue-700 text-white text-xs py-2 px-4 rounded-lg text-center transition"
           >
-            Join Telegram
+            📢 Telegram
           </a>
           <a
             href="https://whatsapp.com/channel/0029Vb9Sd0dAe5VtkUPqFg3n"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-[#25d366] text-white text-sm font-bold py-2 px-4 rounded-full hover:bg-[#1ebe54] transition"
+            className="bg-green-500 hover:bg-green-600 text-white text-xs py-2 px-4 rounded-lg text-center transition"
           >
-            Join WhatsApp
+            📲 WhatsApp
           </a>
         </div>
       </div>
 
-      {/* 📈 Section 2: Past Tips */}
-      <div className="section past-tips">
-        <h4 className="text-[#1F2D5C] font-poppins font-semibold text-base mb-3">📈 Past Tips Performance</h4>
-        <ul className="space-y-2 text-sm font-inter">
+      {/* Past Performance */}
+      <div>
+        <h4 className="text-sm text-white font-medium mb-2">📈 Past Tips</h4>
+        <ul className="space-y-1 text-xs">
           {pastTips.slice(0, 3).map((tip, idx) => (
-            <li key={idx} className="flex justify-between items-center bg-white border border-gray-200 p-2 rounded-md">
+            <li key={idx} className="flex justify-between items-center bg-[#1A1F3A] p-2 rounded-md">
               <span>{tip.title || tip.league || "Unnamed Tip"}</span>
-              <span className={`font-bold ${tip.status === "Won" ? "text-[#2ECC71]" : tip.status === "Lost" ? "text-[#E74C3C]" : "text-gray-500"}`}>
+              <span className={`font-bold ${
+                tip.status === "Won"
+                  ? "text-green-400"
+                  : tip.status === "Lost"
+                  ? "text-red-400"
+                  : "text-gray-400"
+              }`}>
                 {tip.status === "Won" ? "✅ Won" : tip.status === "Lost" ? "❌ Lost" : "⏳ Pending"}
               </span>
             </li>
           ))}
         </ul>
-        <a 
-          href="/past-tips" 
-          className="inline-block mt-4 text-sm text-[#1F2D5C] hover:text-[#FFD700] transition underline"
+        <a
+          href="/past-tips"
+          className="inline-block mt-3 text-xs text-indigo-400 hover:underline transition"
         >
-          View All Past Tips →
+          View All → 
         </a>
       </div>
     </motion.div>

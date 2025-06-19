@@ -1,4 +1,4 @@
-// 📄 Dashboard.jsx — Fixed Layout (Responsive + Clean Grid Rows)
+// 📄 Dashboard.jsx — Patched with Proper Layout + Logo Space
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import StatCard from "./components/StatCard";
@@ -28,13 +28,13 @@ const Dashboard = () => {
   }
 
   return (
-    <main className="bg-[#F2F4F8] min-h-screen py-6 px-4 sm:px-6 lg:px-8 font-poppins">
+    <main className="bg-[#0A0E2C] min-h-screen py-6 px-4 sm:px-6 lg:px-8 font-poppins text-white">
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#1F2D5C]">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">
             Welcome Back, <span className="text-[#FFD700]">{user?.fullName?.split(" ")[0]}</span> 👋
           </h2>
-          <p className="text-sm text-gray-500">Your dashboard is up to date</p>
+          <p className="text-sm text-gray-400">Your dashboard is up to date</p>
         </div>
 
         {/* 🔼 Stats Row */}

@@ -1,5 +1,4 @@
-// src/AppRoutes.jsx
-
+// 📄 AppRoutes.jsx — Updated with WithNavbar applied consistently
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
@@ -15,7 +14,7 @@ import WithNavbar from "./layouts/WithNavbar";
 
 import Dashboard from "./dashboard/Dashboard";
 import Profile from "./pages/Profile";
-import Subscribe from "./pages/Subscribe"; // ✅ Renamed from SubscribeRollover
+import Subscribe from "./pages/Subscribe";
 import SubscribePlanDetail from "./pages/SubscribePlanDetail";
 import GroupedRolloverViewer from "./pages/GroupedRolloverViewer";
 import MyRollover from "./pages/MyRollover";
@@ -29,8 +28,8 @@ import BookingCodes from "./pages/BookingCodes";
 import ManageRolloverPlans from "./pages/ManageRolloverPlans";
 import RolloverPlans from "./pages/RolloverPlans";
 import MyCodes from "./pages/MyCodes";
-import Rollover from "./pages/Rollover"; // or wherever it's located
-
+import Rollover from "./pages/Rollover";
+import PastTips from "./pages/PastTips";
 
 const AppRoutes = () => {
   return (
@@ -42,13 +41,6 @@ const AppRoutes = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
-      <Route path="/subscribe" element={<Subscribe />} /> {/* ✅ Updated here */}
-      <Route path="/subscribe/:id" element={<SubscribePlanDetail />} />
-      <Route path="/rollover-plans" element={<RolloverPlans />} />
-      <Route path="/admin/manage-rollover" element={<ManageRolloverPlans />} />
-	  <Route path="/my-rollover" element={<MyRollover />} />
-	  <Route path="/rollover" element={<Rollover />} />
-
 
       {/* Protected Routes with Navbar */}
       <Route
@@ -67,6 +59,36 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <WithNavbar>
               <Profile />
+            </WithNavbar>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/subscribe"
+        element={
+          <ProtectedRoute>
+            <WithNavbar>
+              <Subscribe />
+            </WithNavbar>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/subscribe/:id"
+        element={
+          <ProtectedRoute>
+            <WithNavbar>
+              <SubscribePlanDetail />
+            </WithNavbar>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/rollover-plans"
+        element={
+          <ProtectedRoute>
+            <WithNavbar>
+              <RolloverPlans />
             </WithNavbar>
           </ProtectedRoute>
         }
@@ -157,6 +179,16 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <WithNavbar>
               <FreeTips />
+            </WithNavbar>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/past-tips"
+        element={
+          <ProtectedRoute>
+            <WithNavbar>
+              <PastTips />
             </WithNavbar>
           </ProtectedRoute>
         }

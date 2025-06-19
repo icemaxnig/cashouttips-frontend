@@ -1,13 +1,27 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../utils/api";
+import SubscribeModal from "../../components/SubscribeModal";
 
 const SubscribeToRolloverPlansWidget = () => {
   const [allPlans, setAllPlans] = useState([]);
   const [visiblePlans, setVisiblePlans] = useState([]);
+  const [myPlanIds, setMyPlanIds] = useState([]);
   const [index, setIndex] = useState(0);
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [wallet, setWallet] = useState({ bonusWallet: 0, mainWallet: 0 });
+
   const navigate = useNavigate();
+
+  const fetchSubscriptions = async () => {
+    try {
+      const res = await api.get("/rollover/my-subscriptions");
+      const ids = res.data.filter(p => p.isActive).map(p => p.planId);
+      setMyPlanIds(ids);
+    } catch (err) {
+      console.error("Failed to load subscriptions");
+    }
+  };
 
   useEffect(() => {
     api.get("/rollover/plans")
@@ -19,6 +33,12 @@ const SubscribeToRolloverPlansWidget = () => {
         setVisiblePlans(plans.slice(0, 3));
       })
       .catch(() => console.error("❌ Failed to load rollover plans"));
+
+    fetchSubscriptions();
+
+    api.get("/user/profile") // Assuming this returns wallet balances
+      .then(res => setWallet(res.data.wallet))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -31,56 +51,38 @@ const SubscribeToRolloverPlansWidget = () => {
     return () => clearInterval(interval);
   }, [index, allPlans]);
 
-  const simulateSubscribers = (plan) => {
-    const created = new Date(plan.createdAt).getTime();
-    const minutesSince = Math.floor((Date.now() - created) / 60000);
-    return 50 + Math.floor(minutesSince * 1.5);
+  const handleSubscribeClick = (plan) => {
+    setSelectedPlan(plan);
   };
 
   return (
     <div className="bg-[#1C1F3C] rounded-xl p-4 border border-gray-700 relative flex flex-col justify-between h-full">
-      <div>
-        <h4 className="text-yellow-300 font-semibold text-lg mb-3">
-          🔁 Subscribe to Rollover Plan
-        </h4>
-        <div className="space-y-3">
-          {visiblePlans.length === 0 ? (
-            <p className="text-sm text-gray-300">No active plans available yet.</p>
+      <h3 className="text-white font-bold text-lg mb-4">Available Rollover Plans</h3>
+      {visiblePlans.map((plan) => (
+        <div key={plan._id} className="mb-4 p-4 bg-[#2A2D4E] rounded">
+          <p className="text-white">{plan.odds} Odds / {plan.duration} Days</p>
+          <p className="text-gray-300">₦{plan.price.toLocaleString()}</p>
+          {myPlanIds.includes(plan._id) ? (
+            <button className="mt-2 px-4 py-1 bg-gray-500 text-white rounded" disabled>Subscribed</button>
           ) : (
-            visiblePlans.map((plan) => (
-              <div
-                key={plan._id}
-                className="bg-[#292D4A] p-3 rounded border border-gray-600 flex justify-between items-center"
-              >
-                <div>
-                  <p className="text-sm text-white font-semibold">🔥 {plan.odds} Odds</p>
-                  <p className="text-xs text-gray-300">
-                    {plan.duration} Days • ₦{plan.price.toLocaleString()}
-                  </p>
-                  <p className="text-xs text-green-400">
-                    Subscribers: {simulateSubscribers(plan).toLocaleString()}
-                  </p>
-                </div>
-                <button
-                  onClick={() => navigate("/rollover")}
-                  className="text-xs text-yellow-300 hover:underline"
-                >
-                  Subscribe →
-                </button>
-              </div>
-            ))
+            <button
+              className="mt-2 px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded"
+              onClick={() => handleSubscribeClick(plan)}
+            >
+              Subscribe
+            </button>
           )}
         </div>
-      </div>
+      ))}
 
-      <div className="mt-4 text-center">
-        <button
-          onClick={() => navigate("/subscribe")}
-          className="text-sm bg-yellow-500 text-black font-semibold px-4 py-2 rounded hover:bg-yellow-400"
-        >
-          View More
-        </button>
-      </div>
+      {selectedPlan && (
+        <SubscribeModal
+          plan={selectedPlan}
+          wallet={wallet}
+          onClose={() => setSelectedPlan(null)}
+          onSubscribed={fetchSubscriptions}
+        />
+      )}
     </div>
   );
 };

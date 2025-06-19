@@ -2,7 +2,7 @@ import React from "react";
 import api from "../utils/api.js";
 import { toast } from "react-toastify";
 
-const SubscribeModal = ({ plan, wallet, onClose }) => {
+const SubscribeModal = ({ plan, wallet, onClose, onSubscribed }) => {
   const { odds, days, price } = plan;
   const { bonusWallet, mainWallet } = wallet;
 
@@ -17,6 +17,7 @@ const SubscribeModal = ({ plan, wallet, onClose }) => {
         amount: price,
       });
       toast.success("Subscription successful");
+      if (onSubscribed) onSubscribed(); // ✅ Refresh list
       onClose();
     } catch (err) {
       toast.error(err?.response?.data?.message || "Subscription failed");
@@ -36,7 +37,7 @@ const SubscribeModal = ({ plan, wallet, onClose }) => {
           <button onClick={onClose} className="px-4 py-2 text-sm bg-gray-300 rounded hover:bg-gray-400">
             Cancel
           </button>
-          <button onClick={handleConfirm} className="px-4 py-2 text-sm bg-yellow-400 text-black rounded hover:bg-yellow-300">
+          <button onClick={handleConfirm} className="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700">
             Confirm
           </button>
         </div>

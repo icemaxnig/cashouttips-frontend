@@ -1,116 +1,95 @@
-// ✅ Rollover.jsx — Final Merged and Branded Full Tips View
+// 📄 Rollover.jsx — Full Public Tips Listing
 import React, { useEffect, useState } from "react";
 import api from "../api";
-import PlanBadge from "../components/PlanBadge";
+import { useAuth } from "../dashboard/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Countdown from "react-countdown";
-import { toast } from "react-toastify";
 
 const Rollover = () => {
-  const [plans, setPlans] = useState([]);
-  const [subscribedPlanIds, setSubscribedPlanIds] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [tips, setTips] = useState([]);
+  const [subscribedPlans, setSubscribedPlans] = useState([]);
+  const { token } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get("/rollover/all")
-      .then(res => setPlans(res.data))
-      .catch(() => toast.error("Failed to load rollover tips"));
+    const loadTips = async () => {
+      try {
+        const [tipRes, subRes] = await Promise.all([
+          api.get("/rollover/all", { headers: { Authorization: `Bearer ${token}` } }),
+          api.get("/rollover/my-subscriptions", { headers: { Authorization: `Bearer ${token}` } })
+        ]);
 
-    api.get("/rollover/my")
-      .then(res => setSubscribedPlanIds(res.data.map(p => p.planId)))
-      .catch(() => console.warn("Could not fetch subscriptions"))
-      .finally(() => setLoading(false));
-  }, []);
+        const activeSubs = (subRes.data || []).filter(sub => new Date(sub.expiresAt) > new Date());
+        setSubscribedPlans(activeSubs.map(p => p.planId));
+        setTips(tipRes.data);
+      } catch (err) {
+        console.error("Error loading tips:", err);
+      }
+    };
 
-  const isSubscribed = (id) => subscribedPlanIds.includes(id);
+    loadTips();
+  }, [token]);
+
+  const isSubscribed = (planId) => subscribedPlans.includes(planId);
 
   return (
-    <div className="bg-[#0A0E2C] text-white min-h-screen px-4 py-6">
-      <h1 className="text-2xl font-bold mb-6 text-yellow-400">
-        📋 All Rollover Tips
-      </h1>
+    <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+      <h2 className="text-2xl font-bold text-[#1F2D5C] mb-4">🎯 All Rollover Tips</h2>
 
-      {loading ? (
-        <p className="text-sm text-gray-400">Loading tips...</p>
-      ) : plans.length === 0 ? (
-        <p className="text-sm text-gray-400">No rollover tips available.</p>
+      {tips.length === 0 ? (
+        <div className="text-gray-400 text-sm">No tips available at the moment.</div>
       ) : (
-        plans.map(plan => (
-          <div key={plan.planId} className="mb-8">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-xl font-bold">{plan.planName}</h2>
-              <PlanBadge odds={plan.totalOdds} />
-            </div>
-            <div className="space-y-4">
-              {plan.tips.map((tip) => (
-                <div
-                  key={tip._id}
-                  className={`rounded-xl p-4 border transition ${
-                    new Date(tip.expiresAt) < new Date()
-                      ? "bg-[#1c223f] border-gray-600 opacity-50 blur-[1px] pointer-events-none"
-                      : "bg-[#1c223f] border-yellow-500"
-                  }`}
+        tips.map((tip, index) => {
+          const tipData = tip.tips?.[0] || {};
+          const subscribed = isSubscribed(tip.planId);
+          const fakeSubs = tip.fakeSubscribers || 0;
+
+          return (
+            <div key={index} className="bg-[#0A0E2C] text-white rounded-xl shadow p-4 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-semibold text-yellow-300">
+                  {tip.planName} ({tip.odds}x)
+                </span>
+                <span className="text-xs text-green-400 font-bold">{tip.totalOdds} Odds</span>
+              </div>
+
+              <div className="text-sm text-white">⚽ {tipData.games?.[0]?.teamA} vs {tipData.games?.[0]?.teamB}</div>
+              <div className="text-xs text-gray-400">{tipData.games?.[0]?.league}</div>
+
+              {subscribed ? (
+                <>
+                  <div className="text-sm text-green-400">Tip: {tipData.games?.[0]?.prediction || "N/A"}</div>
+                  <div className="text-sm text-blue-400">Code: {tipData.bookingCode || "N/A"}</div>
+                  {tipData.note && <div className="text-xs italic text-gray-400">💬 {tipData.note}</div>}
+                </>
+              ) : (
+                <>
+                  <div className="text-sm text-yellow-500">Tip: 🔒 Locked</div>
+                  <div className="text-sm text-yellow-500">Code: 🔒 Locked</div>
+                </>
+              )}
+
+              <div className="flex justify-between items-center text-xs text-gray-400 mt-2">
+                {tipData.expiresAt && (
+                  <span>⏳ <Countdown date={tipData.expiresAt} /></span>
+                )}
+                <span className="text-xs text-indigo-300 font-medium">
+                  👥 {fakeSubs.toLocaleString()} Subscribers
+                </span>
+              </div>
+
+              <div className="mt-2">
+                <button
+                  className={`px-4 py-1 text-sm rounded font-medium w-full ${subscribed ? "bg-indigo-600 text-white" : "bg-yellow-400 text-black"}`}
+                  onClick={() => navigate(subscribed ? "/my-rollover" : "/subscribe")}
                 >
-                  <div className="flex justify-between items-center mb-2">
-                    <p className="text-sm text-yellow-300 font-semibold">
-                      📆 Day {tip.dayIndex + 1} — Total Odds: {tip.totalOdds}
-                    </p>
-                    <p className="text-xs text-red-400">
-                      ⏳ <Countdown date={tip.expiresAt} />
-                    </p>
-                  </div>
-
-                  <ul className={`text-sm space-y-1 ${!isSubscribed(plan.planId) ? "blur-sm" : ""}`}>
-                    {tip.games.map((game, idx) => (
-                      <li key={idx} className="border-b border-gray-700 pb-1">
-                        <div className="font-semibold text-yellow-300">
-                          {game.league} - {game.teams || `${game.teamA} vs ${game.teamB}`}
-                        </div>
-                        <div className="text-xs text-gray-300">
-                          Kickoff: {game.kickoff} | Odds: {game.odds}
-                        </div>
-                        <div className="text-xs">
-                          {game.bookmaker}: <span className="text-green-300">{game.bookingCode}</span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {tip.note && (
-                    <p className="mt-2 italic text-sm text-white/80">
-                      Note: {tip.note}
-                    </p>
-                  )}
-
-                  {!isSubscribed(plan.planId) && (
-                    <div className="absolute inset-0 bg-[#0A0E2C]/80 backdrop-blur-sm z-10 flex items-center justify-center text-white text-xs font-semibold rounded-xl">
-                      🔐 Subscribe to Unlock
-                    </div>
-                  )}
-                </div>
-              ))}
+                  {subscribed ? "🔍 View Today’s Tip" : "🔓 Subscribe to Unlock"}
+                </button>
+              </div>
             </div>
-            {!isSubscribed(plan.planId) && (
-              <button
-                className="mt-2 bg-indigo-600 hover:bg-indigo-700 w-full py-2 rounded text-sm"
-                onClick={() => navigate(`/subscribe/${plan.planId}`)}
-              >
-                🔐 Subscribe to Unlock {plan.planName}
-              </button>
-            )}
-          </div>
-        ))
+          );
+        })
       )}
-
-      <div className="text-center mt-10">
-        <button
-          onClick={() => navigate("/subscribe")}
-          className="bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-6 py-2 rounded-full"
-        >
-          🧾 View All Plans
-        </button>
-      </div>
     </div>
   );
 };

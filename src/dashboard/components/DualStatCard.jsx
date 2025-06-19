@@ -1,19 +1,22 @@
-// src/dashboard/components/DualStatCard.jsx
+// 📄 DualStatCard.jsx — Compact Dark-Themed Dual Stats
 import React from "react";
-import "./DualStatCard.scss";
 
-const DualStatCard = ({ tipsToday, codesToday }) => {
+const DualStatCard = ({ tipsToday = 0, codesToday = 0 }) => {
   return (
-    <div className="dual-stat-card">
-      <h4>📊 Today's Overview</h4>
-      <div className="stats">
-        <div className="stat">
-          <span className="label">Rollover Tips</span>
-          <span className="value">{tipsToday}</span>
+    <div className="bg-[#11152F] p-4 rounded-2xl shadow-md text-white">
+      <h3 className="text-sm font-medium text-yellow-400 mb-3">📊 Today's Stats</h3>
+
+      <div className="grid grid-cols-2 gap-4">
+        {/* Tips Stat */}
+        <div className="bg-[#0A0E2C] p-3 rounded-xl border border-gray-700 text-center">
+          <div className="text-xs text-gray-300 mb-1">Rollover Tips</div>
+          <div className="text-xl font-bold text-white">{tipsToday}</div>
         </div>
-        <div className="stat">
-          <span className="label">Booking Codes</span>
-          <span className="value">{codesToday}</span>
+
+        {/* Booking Codes Stat */}
+        <div className="bg-[#0A0E2C] p-3 rounded-xl border border-gray-700 text-center">
+          <div className="text-xs text-gray-300 mb-1">Booking Codes</div>
+          <div className="text-xl font-bold text-white">{codesToday}</div>
         </div>
       </div>
     </div>
